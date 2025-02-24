@@ -43,13 +43,13 @@ Make sure you have the following installed:
    ```sh
    npm install json-server
    ```
-4. Set json-server to watch db.json file:
-   ```sh
-   json-server --watch db.json
-   ```
-5. Install dependencies:
+4. Install dependencies:
    ```sh
    npm install 
+   ```
+5. Set json-server to watch db.json file:
+   ```sh
+   json-server --watch db.json
    ```
 6. Start the development server, if prompted, press y to use another port:
    ```sh
