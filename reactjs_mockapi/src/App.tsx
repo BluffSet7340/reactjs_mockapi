@@ -16,14 +16,22 @@ function App() {
   // adding a new post
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+  // editing a post
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentPostId, setCurrentPostId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const result = await axios.get("http://localhost:3000/posts");
-      setPosts(result.data);
+      try {
+        const result = await axios.get("http://localhost:3000/posts");
+        setPosts(result.data);
+      } catch (error) {
+        console.error("Error fetching posts:", error); // basic error handling
+      }
     };
     fetchPosts();
   }, []);
+
   // function to add a new post
   const addPost = async () => {
     if (!title || !desc) return;
@@ -34,11 +42,15 @@ function App() {
       title,
       desc,
     };
-
-    await axios.post("http://localhost:3000/posts", newPost);
-    setPosts([...posts, newPost]);
-    setTitle("");
-    setDesc("");
+    // try catch block for error handling
+    try {
+      await axios.post("http://localhost:3000/posts", newPost);
+      setPosts([...posts, newPost]);
+      setTitle("");
+      setDesc("");
+    } catch (error) {
+      console.error("Error adding post:", error);
+    }
   };
 
   // id needs to have an explicit type defined
@@ -48,9 +60,47 @@ function App() {
       return post.id !== id;
     });
     // get rid of the entry that matches the removed post's id
-    await axios.delete(`http://localhost:3000/posts/${id}`);
-    setPosts(newPostList);
+    try {
+      await axios.delete(`http://localhost:3000/posts/${id}`);
+      setPosts(newPostList);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+
   }
+
+  // editing a post
+  const editPost = async (id: string) => {
+    const postToEdit = posts.find(post => post.id === id);
+    if (postToEdit) {
+      setTitle(postToEdit.title);
+      setDesc(postToEdit.desc);
+      setIsEditing(true);
+      setCurrentPostId(id);
+    }
+  };
+  // updating a post
+  const updatePost = async () => {
+    if (!title || !desc || !currentPostId) return;
+
+    const updatedPost = {
+      id: currentPostId,
+      title,
+      desc,
+    };
+
+    try {
+      await axios.put(`http://localhost:3000/posts/${currentPostId}`, updatedPost);
+      setPosts(posts.map(post => (post.id === currentPostId ? updatedPost : post)));
+      setTitle("");
+      setDesc("");
+      setIsEditing(false);
+      setCurrentPostId(null);
+    } catch (error) {
+      console.error("Error updating post:", error);
+    }
+  };
+
 
   return (
     <div className="">
@@ -71,7 +121,10 @@ function App() {
           onChange={e => setDesc(e.target.value)}
           className="p-2 mx-2 border border-gray-300 rounded-md w-64"
         />
-        <button onClick={addPost} className="p-2 mx-2 bg-blue-500 text-white rounded-md">Add Post</button>
+        <button onClick={isEditing ? updatePost : addPost} className="p-2 mx-2 bg-blue-500 text-white rounded-md">
+          {isEditing ? "Update Post" : "Add Post"}
+        </button>
+        {/* <button onClick={addPost} className="p-2 mx-2 bg-blue-500 text-white rounded-md">Add Post</button> */}
       </div>
       {/* displaying all the cards */}
       <div className="App flex flex-col items-center justify-center min-h-screen">
@@ -81,8 +134,14 @@ function App() {
             <div className="block max-w-sm min-w-[300px] p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100">
               <div className="flex justify-between items-start">
                 <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900">{post.title}</h5>
-                {/* clicking this button should delete the post from webpage and api*/}
-                <button className="delete ml-5" onClick={() => deletePost(post.id)}>X</button>
+                <div className="flex space-x-3">
+                  {/* this button should allow for editing the post and updating it */}
+                  <button className="ml-5" onClick={() => editPost(post.id)}>
+                    <i className="fas fa-edit"></i>
+                  </button>
+                  {/* clicking this button should delete the post from webpage and api*/}
+                  <button className="ml-5" onClick={() => deletePost(post.id)}>X</button>
+                </div>
               </div>
               <p className="font-normal text-sm text-gray-700">{post.desc}</p>
             </div>
