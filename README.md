@@ -35,27 +35,27 @@ Make sure you have the following installed:
    ```sh
    git clone https://github.com/BluffSet7340/reactjs_mockapi.git
    ```
-2. Install json-server:
-   ```sh
-   npm install json-server
-   ```
-2. Set json-server to watch db.json file:
-   ```sh
-   json-server --watch db.json
-   ```
 2. Navigate to the project directory:
    ```sh
    cd reactjs_mockapi
    ```
-3. Install dependencies:
+3. Install json-server:
+   ```sh
+   npm install json-server
+   ```
+4. Set json-server to watch db.json file:
+   ```sh
+   json-server --watch db.json
+   ```
+5. Install dependencies:
    ```sh
    npm install 
    ```
-4. Start the development server, if prompted, press y to use another port:
+6. Start the development server, if prompted, press y to use another port:
    ```sh
    npm start 
    ```
-5. Open localhost in your browser.
+7. Open localhost in your browser.
 
 ## Deployment
 
