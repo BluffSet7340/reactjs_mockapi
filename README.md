@@ -74,5 +74,5 @@ This project is licensed under the MIT License.
 
 ## Contact
 
-My [[email](mailto\:saeed.binmizan@gmail.com)].
+My [email](mailto\:saeed.binmizan@gmail.com).
 
